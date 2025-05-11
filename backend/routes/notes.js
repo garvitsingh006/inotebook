@@ -7,7 +7,7 @@ const router = express.Router()
 // ROUTE 1: Get All the Notes using: GET "/api/notes/fetchallnotes". Login required
 router.get("/fetchallnotes", fetchuser,  async (req, res) => {
     try {
-        const userId = req.userId
+        const userId = req.user
         const notes = await Note.find({user: userId})
         res.json(notes)
         
@@ -34,7 +34,7 @@ router.post("/addnote", fetchuser, [
             title: title,
             description: description,
             tag: tag,
-            user: req.userId
+            user: req.user
         })
 
         res.json(note)
@@ -62,7 +62,7 @@ router.patch("/updatenote/:id", fetchuser,  async (req, res) => {
         if (!note) {res.status(404).send("Not Found")}
 
         // Allow updation only if user owns this note
-        if (note.user.toString() !== req.userId) {
+        if (note.user.toString() !== req.user) {
             return res.status(401).send("Not Allowed")
         }
 
@@ -83,7 +83,7 @@ router.delete("/deleltenote/:id", fetchuser,  async (req, res) => {
         if (!note) {res.status(404).send("Not Found")}
     
         // Allow deletion only if user owns this note
-        if (note.user.toString() !== req.userId) {
+        if (note.user.toString() !== req.user) {
             return res.status(401).send("Not Allowed")
         }
 
